@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI BDC ROI + Missed Call Revenue Recovery</title>
+    <meta name="description" content="Calculate ROI for AI-powered BDC: cost savings, missed call recovery, and service upsell. Built for dealerships.">
+    
+    <!-- Google Fonts: Inter (Modern, Clean) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons: Lucide (Lightweight, SVG) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            color: var(--gray-900);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,30 L100,100 L0,100 Z" fill="rgba(255,255,255,0.05)"/></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.025em;
+        }
+
+        header p {
+            font-size: 1.125rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .content { grid-template-columns: 1fr; padding: 2rem; }
+            header h1 { font-size: 2rem; }
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--gray-100);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-title i {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 0.9375rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .input-hint {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            margin-top: 0.375rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .input-hint i {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+        }
+
+        /* Auto-Calc Boxes */
+        .auto-calc {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auto-calc i {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .result-item {
+            background: var(--gray-50);
+            padding: 1.25rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .result-item.missed { border-left-color: var(--warning); }
+        .result-item.revenue { border-left-color: var(--success); }
+
+        .result-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .result-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-top: 0.375rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .highlight {
+            color: var(--success) !important;
+            font-size: 1.75rem !important;
+        }
+
+        /* Profit Box */
+        .profit-box {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border: 1px solid #86efac;
+            color: #065f46;
+            text-align: center;
+            padding: 1.75rem;
+            border-radius: 14px;
+            margin-top: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .profit-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .profit-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            font-size: 0.9375rem;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: var(--gray-100);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 0.875rem;
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .comparison-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-no-ai { background: #fee2e2; color: #991b1b; }
+        .badge-ai { background: #d1fae5; color: #065f46; }
+        .badge-revenue { background: #fffbeb; color: #92400e; }
+
+        /* Insight Box */
+        .insight-box {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border-left: 4px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            font-size: 0.9375rem;
+            color: #5d3a00;
+            box-shadow: var(--shadow);
+        }
+
+        .insight-box h4 {
+            margin-bottom: 0.75rem;
+            color: #d97706;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .source {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            body { background: #0f172a; color: #e2e8f0; }
+            .container, .card { background: #1e293b; border-color: #334155; }
+            input[type="number"] { background: #334155; color: #e2e8f0; border-color: #475569; }
+            .result-item { background: #334155; }
+            .comparison-table th { background: #334155; }
+            .insight-box { background: #451a03; color: #fed7aa; }
+            .profit-box { background: #064e3b; color: #a7f3d0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>AI BDC ROI + Missed Call Revenue</h1>
+                <p>Stop losing $100K+ in sales. See how AI recovers missed calls and drives profit.</p>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- INPUTS -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i data-lucide="phone"></i> Call Volume & Revenue Assumptions
+                </h2>
+
+                <div class="form-group">
+                    <label for="monthlyCalls">Monthly Inbound Calls</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="monthlyCalls" value="1500">
+                        <div class="input-hint"><i data-lucide="info"></i> Mid-size dealership: 1,200–1,800</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="missedCallRateNoAi">Missed Call Rate (No AI)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="missedCallRateNoAi" value="27" min="0" max="100">
+                        <div class="input-hint"><i data-lucide="alert-circle"></i> Industry avg: 27% <span class="source">— CarWars 2024</span></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="missedCallRateAi">Missed Call Rate (With AI)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="missedCallRateAi" value="5" min="0" max="100">
+                        <div class="input-hint"><i data-lucide="check-circle"></i> AI auto-callback → 95% capture</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="callToApptRate">Call → Appointment Rate</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="callToApptRate" value="40" min="0" max="100">
+                        <div class="input-hint"><i data-lucide="calendar"></i> Typical: 35–45%</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="apptToSaleRate">Appointment → Sale Rate</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="apptToSaleRate" value="35" min="0" max="100">
+                        <div class="input-hint"><i data-lucide="handshake"></i> Typical: 30–40%</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="grossProfitPerSale">Gross Profit per Sale</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="grossProfitPerSale" value="2200">
+                        <div class="input-hint"><i data-lucide="dollar-sign"></i> Average new/used vehicle</div>
+                    </div>
+                </div>
+
+                <div style="border-top: 2px dashed var(--gray-200); margin: 2rem 0;"></div>
+
+                <h3 class="card-title" style="font-size:1.25rem; margin-bottom:1rem;">
+                    <i data-lucide="users"></i> BDC & AI Costs
+                </h3>
+
+                <div class="form-group">
+                    <label for="callsPerRepNoAi">Calls per Rep/Month (No AI)</label>
+                    <input type="number" id="callsPerRepNoAi" value="500">
+                </div>
+
+                <div class="form-group">
+                    <label for="callsPerRepAi">Calls per Rep/Month (With AI)</label>
+                    <input type="number" id="callsPerRepAi" value="1500">
+                </div>
+
+                <div class="form-group">
+                    <label for="repCost">Annual Cost per Rep</label>
+                    <input type="number" id="repCost" value="60000">
+                </div>
+
+                <div class="form-group">
+                    <label for="aiMonthlyCost">Monthly AI Cost</label>
+                    <input type="number" id="aiMonthlyCost" value="250">
+                </div>
+
+                <div class="form-group">
+                    <label for="setupCost">Setup Cost (One-Time)</label>
+                    <input type="number" id="setupCost" value="5000">
+                </div>
+
+                <div class="auto-calc" id="noAiRepsCalc">
+                    <i data-lucide="user-x"></i> Without AI: <strong>3 reps</strong>
+                </div>
+                <div class="auto-calc" id="aiRepsCalc">
+                    <i data-lucide="user-check"></i> With AI: <strong>1 rep</strong>
+                </div>
+            </div>
+
+            <!-- RESULTS -->
+            <div class="card">
+                <h2 class="card-title">
+                    <i data-lucide="trending-up"></i> ROI & Profit Impact
+                </h2>
+
+                <div id="results"></div>
+
+                <div class="profit-box">
+                    <div class="profit-title">
+                        <i data-lucide="dollar-sign"></i> Total Annual Profit Gain
+                    </div>
+                    <div class="profit-value" id="totalProfit">$235,000</div>
+                </div>
+
+                <table class="comparison-table" id="comparisonTable"></table>
+
+                <div class="insight-box">
+                    <h4><i data-lucide="lightbulb"></i> The Missed Call Crisis</h4>
+                    <p>At 1,500 calls/month, you lose <strong>405 calls</strong> without AI → <strong>~$100K in lost gross profit</strong>. AI recovers 88% of them → <strong>+$88K/year in new sales</strong>.</p>
+                    <div class="source">— CarWars 2024 Call Study, NADA 2024</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Paul Bristow. All rights reserved. | <a href="mailto:paulmbristow@icloud.com">paulmbristow@icloud.com</a></p>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        const el = {
+            monthlyCalls: document.getElementById('monthlyCalls'),
+            missedCallRateNoAi: document.getElementById('missedCallRateNoAi'),
+            missedCallRateAi: document.getElementById('missedCallRateAi'),
+            callToApptRate: document.getElementById('callToApptRate'),
+            apptToSaleRate: document.getElementById('apptToSaleRate'),
+            grossProfitPerSale: document.getElementById('grossProfitPerSale'),
+            callsPerRepNoAi: document.getElementById('callsPerRepNoAi'),
+            callsPerRepAi: document.getElementById('callsPerRepAi'),
+            repCost: document.getElementById('repCost'),
+            aiMonthlyCost: document.getElementById('aiMonthlyCost'),
+            setupCost: document.getElementById('setupCost'),
+            noAiRepsCalc: document.getElementById('noAiRepsCalc'),
+            aiRepsCalc: document.getElementById('aiRepsCalc'),
+            results: document.getElementById('results'),
+            totalProfit: document.getElementById('totalProfit'),
+            comparisonTable: document.getElementById('comparisonTable')
+        };
+
+        function update() {
+            const calls = +el.monthlyCalls.value || 1500;
+            const missNoAi = (+el.missedCallRateNoAi.value || 27) / 100;
+            const missAi = (+el.missedCallRateAi.value || 5) / 100;
+            const apptRate = (+el.callToApptRate.value || 40) / 100;
+            const saleRate = (+el.apptToSaleRate.value || 35) / 100;
+            const profit = +el.grossProfitPerSale.value || 2200;
+            const repNoAi = +el.callsPerRepNoAi.value || 500;
+            const repAi = +el.callsPerRepAi.value || 1500;
+            const repCost = +el.repCost.value || 60000;
+            const aiMonth = +el.aiMonthlyCost.value || 250;
+            const setup = +el.setupCost.value || 5000;
+
+            // BDC Reps
+            const repsNoAi = Math.ceil(calls / repNoAi);
+            const repsAi = Math.ceil(calls / repAi);
+            el.noAiRepsCalc.innerHTML = `<i data-lucide="user-x"></i> Without AI: <strong>${repsNoAi} rep${repsNoAi>1?'s':''}</strong>`;
+            el.aiRepsCalc.innerHTML = `<i data-lucide="user-check"></i> With AI: <strong>${repsAi} rep${repsAi>1?'s':''}</strong>`;
+            lucide.createIcons();
+
+            // Missed Calls
+            const missedNoAi = Math.round(calls * missNoAi);
+            const missedAi = Math.round(calls * missAi);
+            const recovered = missedNoAi - missedAi;
+
+            // Revenue from Recovered Calls
+            const appts = recovered * apptRate;
+            const sales = appts * saleRate;
+            const missedRevenue = sales * profit;
+
+            // Cost Savings
+            const laborNoAi = repsNoAi * repCost;
+            const laborAi = repsAi * repCost;
+            const aiAnnual = aiMonth * 12;
+            const costSavings = laborNoAi - (laborAi + aiAnnual);
+
+            // Total Profit
+            const totalProfit = costSavings + missedRevenue;
+            const roi = ((totalProfit - setup) / (aiAnnual + setup) * 100).toFixed(0);
+
+            // Update Results
+            el.results.innerHTML = `
+                <div class="results-grid">
+                    <div class="result-item missed">
+                        <div class="result-label"><i data-lucide="phone-missed"></i> Missed (No AI)</div>
+                        <div class="result-value">${missedNoAi}</div>
+                    </div>
+                    <div class="result-item missed">
+                        <div class="result-label"><i data-lucide="phone"></i> Missed (AI)</div>
+                        <div class="result-value">${missedAi}</div>
+                    </div>
+                    <div class="result-item revenue">
+                        <div class="result-label"><i data-lucide="arrow-up-right"></i> Recovered Sales</div>
+                        <div class="result-value">+${sales.toFixed(0)}</div>
+                    </div>
+                    <div class="result-item revenue">
+                        <div class="result-label"><i data-lucide="dollar-sign"></i> Extra Profit</div>
+                        <div class="result-value">+$${missedRevenue.toLocaleString()}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i data-lucide="users"></i> Labor Savings</div>
+                        <div class="result-value">$${costSavings.toLocaleString()}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i data-lucide="percent"></i> Year 1 ROI</div>
+                        <div class="result-value highlight">${roi}%</div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+
+            el.totalProfit.textContent = `$${totalProfit.toLocaleString()}`;
+
+            el.comparisonTable.innerHTML = `
+                <tr><th></th><th class="badge badge-no-ai"><i data-lucide="x-circle"></i> No AI</th><th class="badge badge-ai"><i data-lucide="check-circle"></i> With AI</th></tr>
+                <tr><td><strong>Missed Calls/Month</strong></td><td>${missedNoAi}</td><td>${missedAi}</td></tr>
+                <tr><td><strong>Recovered Calls</strong></td><td>—</td><td>${recovered}</td></tr>
+                <tr><td><strong>Extra Sales</strong></td><td>—</td><td>+${sales.toFixed(0)}</td></tr>
+                <tr><td><strong>Extra Gross Profit</strong></td><td>$0</td><td>+$${missedRevenue.toLocaleString()}</td></tr>
+                <tr><td><strong>Labor Cost</strong></td><td>$${laborNoAi.toLocaleString()}</td><td>$${laborAi.toLocaleString()}</td></tr>
+                <tr><td><strong>AI Cost (Annual)</strong></td><td>$0</td><td>$${aiAnnual.toLocaleString()}</td></tr>
+                <tr style="background:#d1fae5; font-weight:700;">
+                    <td><strong>Total Profit Gain</strong></td><td>$0</td><td>$${totalProfit.toLocaleString()}</td>
+                </tr>
+            `;
+            lucide.createIcons();
+        }
+
+        // Live update
+        Object.values(el).forEach(input => {
+            if (input && input.tagName === 'INPUT') input.addEventListener('input', update);
+        });
+
+        update();
+    </script>
+</body>
+</html>
