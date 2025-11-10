@@ -3,278 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI BDC ROI + Missed Service Revenue Recovery</title>
-    <meta name="description" content="Calculate ROI for AI-powered BDC: cost savings, missed call recovery, and service revenue gains. Built for dealership service departments.">
-    
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons: Lucide -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-    <!-- Chart.js for ROI Graph -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <title>PhoneTrack Pro ROI Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-light: #3b82f6;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #dbeafe;
+            --accent: #6366f1;
+            --text: #1e293b;
+            --muted: #64748b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
             --success: #10b981;
             --warning: #f59e0b;
-            --danger: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-500: #6b7280;
-            --gray-700: #374151;
-            --gray-900: #111827;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --radius: 12px;
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            --gradient-dark: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
-            color: var(--gray-900);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(120deg, #f8fafc 0%, #eef2ff 100%);
+            color: var(--text);
             line-height: 1.6;
-            min-height: 100vh;
-            padding: 1rem;
         }
 
         .container {
-            max-width: 1280px;
+            max-width: 1100px;
             margin: 0 auto;
-            background: white;
-            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             overflow: hidden;
-            box-shadow: var(--shadow-xl);
+        }
+
+        .bg-blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--gradient);
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-blob:nth-child(1) {
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .bg-blob:nth-child(2) {
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 10s;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-60px) rotate(10deg); }
         }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            background: var(--gradient);
             color: white;
-            padding: 3rem 2rem;
+            padding: 3.5rem 2rem;
+            border-radius: 1.5rem;
             text-align: center;
             position: relative;
             overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,30 L100,100 L0,100 Z" fill="rgba(255,255,255,0.05)"/></svg>') no-repeat bottom;
-            background-size: cover;
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            margin-bottom: 2.5rem;
         }
 
         header h1 {
-            font-size: 2.5rem;
+            font-size: 2.75rem;
             font-weight: 800;
             margin-bottom: 0.75rem;
-            letter-spacing: -0.025em;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         header p {
-            font-size: 1.125rem;
+            font-size: 1.15rem;
             opacity: 0.95;
-            font-weight: 500;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Main Content */
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            padding: 2.5rem;
-        }
-
-        @media (max-width: 992px) {
-            .content { grid-template-columns: 1fr; padding: 2rem; }
-            header h1 { font-size: 2rem; }
-        }
-
-        /* Cards */
-        .card {
+        /* Unified Inputs Panel */
+        .inputs-panel {
             background: white;
-            border-radius: var(--radius);
-            padding: 1.75rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border);
         }
 
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-        }
-
-        .card-title {
-            font-size: 1.5rem;
+        .inputs-panel h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 2px solid var(--gray-100);
-            padding-bottom: 0.75rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .card-title i {
-            width: 28px;
-            height: 28px;
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
         }
 
-        /* Form Groups */
-        .form-group {
-            margin-bottom: 1.5rem;
+        .input-group {
+            position: relative;
         }
 
-        label {
+        .input-group label {
             display: block;
             font-weight: 600;
-            color: var(--gray-700);
             margin-bottom: 0.5rem;
-            font-size: 0.9375rem;
+            color: var(--text);
+            font-size: 0.95rem;
         }
 
         .input-wrapper {
             position: relative;
         }
 
-        input[type="number"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-200);
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: var(--transition);
-            background: var(--gray-50);
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 1.1rem;
+            z-index: 1;
         }
 
-        input[type="number"]:focus {
+        .input-group input {
+            width: 100%;
+            padding: 0.9rem 0.9rem 0.9rem 2.75rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background: var(--light);
+        }
+
+        .input-group input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
             background: white;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
-        .input-hint {
-            font-size: 0.8125rem;
-            color: var(--gray-500);
-            margin-top: 0.375rem;
+        .source-note {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+            font-style: italic;
             display: flex;
             align-items: center;
             gap: 0.25rem;
         }
 
-        .input-hint i {
-            width: 16px;
-            height: 16px;
-            opacity: 0.7;
-        }
-
-        /* Auto-Calc Boxes */
-        .auto-calc {
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            border-left: 4px solid var(--primary);
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 1rem 0;
-            font-weight: 600;
+        .source-note a {
             color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            text-decoration: none;
         }
 
-        .auto-calc i {
-            width: 20px;
-            height: 20px;
+        .source-note a:hover {
+            text-decoration: underline;
         }
 
-        /* Results Grid */
-        .results-grid {
+        /* Results */
+        .results {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-top: 2rem;
+            display: none;
+            border: 1px solid #bae6fd;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .results.show {
+            display: block;
+            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
         }
 
-        .result-item {
-            background: var(--gray-50);
-            padding: 1.25rem;
-            border-radius: 10px;
-            border-left: 4px solid var(--primary);
-            transition: var(--transition);
-        }
-
-        .result-item.missed { border-left-color: var(--warning); }
-        .result-item.revenue { border-left-color: var(--success); }
-
-        .result-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow);
+        .result-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #bae6fd;
         }
 
         .result-label {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-        }
-
-        .result-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--gray-900);
-            margin-top: 0.375rem;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .highlight {
-            color: var(--success) !important;
-            font-size: 1.75rem !important;
-        }
-
-        /* Profit Box */
-        .profit-box {
-            grid-column: 1 / -1;
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            border: 1px solid #86efac;
-            color: #065f46;
-            text-align: center;
-            padding: 1.75rem;
-            border-radius: 14px;
-            margin-top: 1.5rem;
-            box-shadow: var(--shadow);
-        }
-
-        .profit-title {
-            font-size: 1.125rem;
-            font-weight: 700;
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 0.9rem;
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
@@ -282,479 +249,279 @@
             gap: 0.5rem;
         }
 
-        .profit-value {
-            font-size: 2.5rem;
+        .result-value {
             font-weight: 800;
-            color: var(--success);
-        }
-
-        /* ROI Graph */
-        .graph-container {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--gray-50);
-            border-radius: 12px;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow);
-        }
-
-        .graph-title {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-size: 1.5rem;
             color: var(--primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .graph-title i {
-            width: 24px;
-            height: 24px;
-        }
-
-        #roiChart {
-            height: 320px !important;
-        }
-
-        /* Comparison Table */
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
-            font-size: 0.9375rem;
-            box-shadow: var(--shadow);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .comparison-table th {
-            background: var(--gray-100);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--gray-900);
-            font-size: 0.875rem;
-        }
-
-        .comparison-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .comparison-table tr:hover {
-            background: var(--gray-50);
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .badge-no-ai { background: #fee2e2; color: #991b1b; }
-        .badge-ai { background: #d1fae5; color: #065f46; }
-        .badge-revenue { background: #fffbeb; color: #92400e; }
-
-        /* Insight Box */
-        .insight-box {
-            background: linear-gradient(135deg, #fffbeb, #fef3c7);
-            border-left: 4px solid var(--warning);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 2rem;
-            font-size: 0.9375rem;
-            color: #5d3a00;
-            box-shadow: var(--shadow);
-        }
-
-        .insight-box h4 {
-            margin-bottom: 0.75rem;
-            color: #d97706;
+        .highlight {
+            grid-column: 1 / -1;
+            background: var(--gradient);
+            color: white;
+            padding: 1.75rem;
+            border-radius: 1rem;
+            text-align: center;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
         }
 
-        .source {
-            font-size: 0.8125rem;
-            color: var(--gray-500);
-            font-style: italic;
-            margin-top: 0.5rem;
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .feature-card h3 i {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-card li {
+            padding: 0.5rem 0;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .feature-card li i {
+            color: var(--success);
+            width: 18px;
         }
 
         /* Footer */
         footer {
-            background: var(--gray-900);
-            color: white;
             text-align: center;
-            padding: 1.5rem;
-            font-size: 0.875rem;
+            padding: 2.5rem 0;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+            font-size: 0.9rem;
         }
 
-        footer a {
-            color: var(--primary-light);
-            text-decoration: none;
-            font-weight: 600;
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 2.5rem 1.5rem;
+            }
+            header h1 {
+                font-size: 2.25rem;
+            }
+            .inputs-grid {
+                grid-template-columns: 1fr;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        footer a:hover {
-            text-decoration: underline;
+        .pulse {
+            animation: pulse 2s infinite;
         }
 
-        /* Dark Mode */
-        @media (prefers-color-scheme: dark) {
-            body { background: #0f172a; color: #e2e8f0; }
-            .container, .card { background: #1e293b; border-color: #334155; }
-            input[type="number"] { background: #334155; color: #e2e8f0; border-color: #475569; }
-            .result-item { background: #334155; }
-            .comparison-table th { background: #334155; }
-            .insight-box { background: #451a03; color: #fed7aa; }
-            .profit-box { background: #064e3b; color: #a7f3d0; }
-            .graph-container { background: #334155; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <h1>AI BDC ROI + Missed Service Revenue</h1>
-                <p>Stop losing $100K+ in service revenue from missed calls. See how AI recovers them and drives profit.</p>
-            </div>
-        </header>
-
-        <div class="content">
-            <!-- INPUTS -->
-            <div class="card">
-                <h2 class="card-title">
-                    <i data-lucide="phone"></i> Service Call Volume & Revenue Assumptions
-                </h2>
-
-                <div class="form-group">
-                    <label for="monthlyCalls">Monthly Inbound Service Calls</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="monthlyCalls" value="1500">
-                        <div class="input-hint"><i data-lucide="info"></i> Mid-size dealership: 1,200–1,800</div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="missedCallRateNoAi">Missed Call Rate (No AI)</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="missedCallRateNoAi" value="27" min="0" max="100">
-                        <div class="input-hint"><i data-lucide="alert-circle"></i> Industry avg: 27% <span class="source">— CarWars 2024</span></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="missedCallRateAi">Missed Call Rate (With AI)</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="missedCallRateAi" value="5" min="0" max="100">
-                        <div class="input-hint"><i data-lucide="check-circle"></i> AI auto-callback → 95% capture</div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="callToApptRate">Call → Service Appointment Rate</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="callToApptRate" value="60" min="0" max="100">
-                        <div class="input-hint"><i data-lucide="calendar"></i> Typical: 55–65%</div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="apptToServiceRate">Appointment → Service Transaction Rate</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="apptToServiceRate" value="85" min="0" max="100">
-                        <div class="input-hint"><i data-lucide="wrench"></i> Typical: 80–90%</div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="grossProfitPerService">Gross Profit per Service Transaction</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="grossProfitPerService" value="250">
-                        <div class="input-hint"><i data-lucide="dollar-sign"></i> Average for medium dealership (45% margin on ~$550 ARO) <span class="source">— NADA 2024</span></div>
-                    </div>
-                </div>
-
-                <div style="border-top: 2px dashed var(--gray-200); margin: 2rem 0;"></div>
-
-                <h3 class="card-title" style="font-size:1.25rem; margin-bottom:1rem;">
-                    <i data-lucide="users"></i> BDC & AI Costs
-                </h3>
-
-                <div class="form-group">
-                    <label for="callsPerRepNoAi">Calls per Rep/Month (No AI)</label>
-                    <input type="number" id="callsPerRepNoAi" value="500">
-                </div>
-
-                <div class="form-group">
-                    <label for="callsPerRepAi">Calls per Rep/Month (With AI)</label>
-                    <input type="number" id="callsPerRepAi" value="1500">
-                </div>
-
-                <div class="form-group">
-                    <label for="repCost">Annual Cost per Rep</label>
-                    <input type="number" id="repCost" value="60000">
-                </div>
-
-                <div class="form-group">
-                    <label for="aiMonthlyCost">Monthly AI Cost</label>
-                    <input type="number" id="aiMonthlyCost" value="250">
-                </div>
-
-                <div class="form-group">
-                    <label for="setupCost">Setup Cost (One-Time)</label>
-                    <input type="number" id="setupCost" value="5000">
-                </div>
-
-                <div class="auto-calc" id="noAiRepsCalc">
-                    <i data-lucide="user-x"></i> Without AI: <strong>3 reps</strong>
-                </div>
-                <div class="auto-calc" id="aiRepsCalc">
-                    <i data-lucide="user-check"></i> With AI: <strong>1 rep</strong>
-                </div>
-            </div>
-
-            <!-- RESULTS -->
-            <div class="card">
-                <h2 class="card-title">
-                    <i data-lucide="trending-up"></i> ROI & Service Profit Impact
-                </h2>
-
-                <div id="results"></div>
-
-                <div class="profit-box">
-                    <div class="profit-title">
-                        <i data-lucide="dollar-sign"></i> Total Annual Service Profit Gain
-                    </div>
-                    <div class="profit-value" id="totalProfit">$135,000</div>
-                </div>
-
-                <!-- ROI GRAPH -->
-                <div class="graph-container">
-                    <div class="graph-title">
-                        <i data-lucide="bar-chart-3"></i> ROI Breakdown: Costs vs. Service Revenue Gains
-                    </div>
-                    <canvas id="roiChart"></canvas>
-                </div>
-
-                <table class="comparison-table" id="comparisonTable"></table>
-
-                <div class="insight-box">
-                    <h4><i data-lucide="lightbulb"></i> The Missed Service Call Crisis</h4>
-                    <p>At 1,500 service calls/month, you lose <strong>405 calls</strong> without AI → <strong>~$100K in lost service gross profit</strong>. AI recovers 88% of them → <strong>+$88K/year in new service transactions</strong>.</p>
-                    <div class="source">— CarWars 2024 Call Study, NADA 2024</div>
-                </div>
-            </div>
-        </div>
+    <div class="bg-animation">
+        <div class="bg-blob"></div>
+        <div class="bg-blob"></div>
     </div>
 
-    <footer>
-        <p>© 2025 Paul Bristow. All rights reserved. | <a href="mailto:paulmbristow@icloud.com">paulmbristow@icloud.com</a></p>
-    </footer>
+    <div class="container">
+        <header>
+            <h1>PhoneTrack Pro ROI Calculator</h1>
+            <p>Discover how many sales you're losing to missed calls — and how much you can recover with AI-powered call tracking.</p>
+        </header>
 
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Chart.js instance
-        let roiChart;
-
-        const el = {
-            monthlyCalls: document.getElementById('monthlyCalls'),
-            missedCallRateNoAi: document.getElementById('missedCallRateNoAi'),
-            missedCallRateAi: document.getElementById('missedCallRateAi'),
-            callToApptRate: document.getElementById('callToApptRate'),
-            apptToServiceRate: document.getElementById('apptToServiceRate'),
-            grossProfitPerService: document.getElementById('grossProfitPerService'),
-            callsPerRepNoAi: document.getElementById('callsPerRepNoAi'),
-            callsPerRepAi: document.getElementById('callsPerRepAi'),
-            repCost: document.getElementById('repCost'),
-            aiMonthlyCost: document.getElementById('aiMonthlyCost'),
-            setupCost: document.getElementById('setupCost'),
-            noAiRepsCalc: document.getElementById('noAiRepsCalc'),
-            aiRepsCalc: document.getElementById('aiRepsCalc'),
-            results: document.getElementById('results'),
-            totalProfit: document.getElementById('totalProfit'),
-            comparisonTable: document.getElementById('comparisonTable')
-        };
-
-        function update() {
-            const calls = +el.monthlyCalls.value || 1500;
-            const missNoAi = (+el.missedCallRateNoAi.value || 27) / 100;
-            const missAi = (+el.missedCallRateAi.value || 5) / 100;
-            const apptRate = (+el.callToApptRate.value || 60) / 100;
-            const serviceRate = (+el.apptToServiceRate.value || 85) / 100;
-            const profit = +el.grossProfitPerService.value || 250;
-            const repNoAi = +el.callsPerRepNoAi.value || 500;
-            const repAi = +el.callsPerRepAi.value || 1500;
-            const repCost = +el.repCost.value || 60000;
-            const aiMonth = +el.aiMonthlyCost.value || 250;
-            const setup = +el.setupCost.value || 5000;
-
-            // BDC Reps
-            const repsNoAi = Math.ceil(calls / repNoAi);
-            const repsAi = Math.ceil(calls / repAi);
-            el.noAiRepsCalc.innerHTML = `<i data-lucide="user-x"></i> Without AI: <strong>${repsNoAi} rep${repsNoAi>1?'s':''}</strong>`;
-            el.aiRepsCalc.innerHTML = `<i data-lucide="user-check"></i> With AI: <strong>${repsAi} rep${repsAi>1?'s':''}</strong>`;
-            lucide.createIcons();
-
-            // Missed Calls
-            const missedNoAi = Math.round(calls * missNoAi);
-            const missedAi = Math.round(calls * missAi);
-            const recovered = missedNoAi - missedAi;
-
-            // Revenue from Recovered Service Calls
-            const appts = recovered * apptRate;
-            const services = appts * serviceRate;
-            const missedRevenue = services * profit;
-
-            // Cost Savings
-            const laborNoAi = repsNoAi * repCost;
-            const laborAi = repsAi * repCost;
-            const aiAnnual = aiMonth * 12;
-            const costSavings = laborNoAi - (laborAi + aiAnnual);
-
-            // Total Profit
-            const totalProfit = costSavings + missedRevenue;
-            const roi = ((totalProfit - setup) / (aiAnnual + setup) * 100).toFixed(0);
-
-            // Update Results
-            el.results.innerHTML = `
-                <div class="results-grid">
-                    <div class="result-item missed">
-                        <div class="result-label"><i data-lucide="phone-missed"></i> Missed (No AI)</div>
-                        <div class="result-value">${missedNoAi}</div>
-                    </div>
-                    <div class="result-item missed">
-                        <div class="result-label"><i data-lucide="phone"></i> Missed (AI)</div>
-                        <div class="result-value">${missedAi}</div>
-                    </div>
-                    <div class="result-item revenue">
-                        <div class="result-label"><i data-lucide="arrow-up-right"></i> Recovered Service Transactions</div>
-                        <div class="result-value">+${services.toFixed(0)}</div>
-                    </div>
-                    <div class="result-item revenue">
-                        <div class="result-label"><i data-lucide="dollar-sign"></i> Extra Service Profit</div>
-                        <div class="result-value">+$${missedRevenue.toLocaleString()}</div>
-                    </div>
-                    <div class="result-item">
-                        <div class="result-label"><i data-lucide="users"></i> Labor Savings</div>
-                        <div class="result-value">$${costSavings.toLocaleString()}</div>
-                    </div>
-                    <div class="result-item">
-                        <div class="result-label"><i data-lucide="percent"></i> Year 1 ROI</div>
-                        <div class="result-value highlight">${roi}%</div>
+        <!-- Single Unified Inputs Panel -->
+        <section class="inputs-panel">
+            <h2>Customize Your Dealership Data</h2>
+            <div class="inputs-grid">
+                <div class="input-group">
+                    <label for="dailyCalls">Daily Inbound Calls</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone"></i>
+                        <input type="number" id="dailyCalls" value="100" min="0" placeholder="e.g., 100">
                     </div>
                 </div>
-            `;
-            lucide.createIcons();
+                <div class="input-group">
+                    <label for="missRate">Missed Call Rate (%)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <input type="number" id="missRate" value="23" min="0" max="100" step="0.1" placeholder="e.g., 23">
+                    </div>
+                    <div class="source-note">
+                        Default: 23% <a href="https://www.cars.com/articles/how-many-calls-do-car-dealerships-miss-1420699973798/" target="_blank">[Cars.com 2023]</a>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="convRate">Call-to-Sale Conversion (%)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-handshake"></i>
+                        <input type="number" id="convRate" value="28" min="0" max="100" step="0.1" placeholder="e.g., 28">
+                    </div>
+                    <div class="source-note">
+                        Default: 28% <a href="https://www.nada.org/nada/research-data" target="_blank">[NADA 2025]</a>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="avgSale">Average Sale Value ($)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-dollar-sign"></i>
+                        <input type="number" id="avgSale" value="50000" min="0" placeholder="e.g., 50000">
+                    </div>
+                    <div class="source-note">
+                        Default: $50,000 <a href="https://www.kbb.com/car-news/average-new-car-price-tops-50000/" target="_blank">[KBB Nov 2025]</a>
+                    </div>
+                </div>
+            </div>
+            <div id="results" class="results">
+                <div class="result-grid">
+                    <div class="result-card">
+                        <div class="result-label">Daily Missed Calls</div>
+                        <div id="dailyMissed" class="result-value">—</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Daily Lost Revenue</div>
+                        <div id="dailyLost" class="result-value">—</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Monthly Lost Revenue</div>
+                        <div id="monthlyLost" class="result-value">—</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Annual Lost Revenue</div>
+                        <div id="annualLost" class="result-value">—</div>
+                    </div>
+                </div>
+                <div class="highlight">
+                    With PhoneTrack Pro: Recover <span id="recoveredAnnual">—</span> in annual sales
+                </div>
+            </div>
+        </section>
 
-            el.totalProfit.textContent = `$${totalProfit.toLocaleString()}`;
+        <!-- Features -->
+        <section class="features">
+            <div class="feature-card">
+                <h3>Precision Attribution</h3>
+                <ul>
+                    <li>Track every call to its exact marketing source</li>
+                    <li>Improve ad ROI accuracy by up to 45%</li>
+                    <li>Stop wasting budget on underperforming channels</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3>AI Call Intelligence</h3>
+                <ul>
+                    <li>Full recording with real-time sentiment analysis</li>
+                    <li>Live coaching alerts for staff performance</li>
+                    <li>Auto-detect missed upsell opportunities</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3>Revenue Recovery Engine</h3>
+                <ul>
+                    <li>Recover 30%+ of lost leads automatically</li>
+                    <li>Instant CRM sync & smart follow-up routing</li>
+                    <li>Cut hold times by 60% with intelligent call flow</li>
+                </ul>
+            </div>
+        </section>
 
-            el.comparisonTable.innerHTML = `
-                <tr><th></th><th class="badge badge-no-ai"><i data-lucide="x-circle"></i> No AI</th><th class="badge badge-ai"><i data-lucide="check-circle"></i> With AI</th></tr>
-                <tr><td><strong>Missed Calls/Month</strong></td><td>${missedNoAi}</td><td>${missedAi}</td></tr>
-                <tr><td><strong>Recovered Calls</strong></td><td>—</td><td>${recovered}</td></tr>
-                <tr><td><strong>Extra Service Transactions</strong></td><td>—</td><td>+${services.toFixed(0)}</td></tr>
-                <tr><td><strong>Extra Service Gross Profit</strong></td><td>$0</td><td>+$${missedRevenue.toLocaleString()}</td></tr>
-                <tr><td><strong>Labor Cost</strong></td><td>$${laborNoAi.toLocaleString()}</td><td>$${laborAi.toLocaleString()}</td></tr>
-                <tr><td><strong>AI Cost (Annual)</strong></td><td>$0</td><td>$${aiAnnual.toLocaleString()}</td></tr>
-                <tr style="background:#d1fae5; font-weight:700;">
-                    <td><strong>Total Service Profit Gain</strong></td><td>$0</td><td>$${totalProfit.toLocaleString()}</td>
-                </tr>
-            `;
-            lucide.createIcons();
+        <footer>
+            <p>© 2025 Paul M Bristow. All rights reserved.</p>
+        </footer>
+    </div>
 
-            // === UPDATE CHART ===
-            const ctx = document.getElementById('roiChart').getContext('2d');
-            const totalInvestment = aiAnnual + setup;
-
-            if (roiChart) roiChart.destroy();
-
-            roiChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['AI Investment', 'Labor Savings', 'Missed Service Revenue', 'Net Service Profit Gain'],
-                    datasets: [{
-                        label: 'Year 1 Financial Impact',
-                        data: [
-                            -totalInvestment,
-                            costSavings,
-                            missedRevenue,
-                            totalProfit
-                        ],
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.8)',   // Red
-                            'rgba(34, 197, 94, 0.8)',   // Green
-                            'rgba(251, 146, 60, 0.8)',  // Orange
-                            'rgba(16, 185, 129, 0.9)'   // Dark Green
-                        ],
-                        borderColor: [
-                            'rgb(239, 68, 68)',
-                            'rgb(34, 197, 94)',
-                            'rgb(251, 146, 60)',
-                            'rgb(16, 185, 129)'
-                        ],
-                        borderWidth: 2,
-                        borderRadius: 8,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label += ': ';
-                                    label += '$' + Math.abs(context.parsed.y).toLocaleString();
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: value => '$' + value.toLocaleString(),
-                                font: { size: 12 }
-                            },
-                            grid: { color: 'rgba(0,0,0,0.05)' }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    },
-                    animation: {
-                        duration: 800,
-                        easing: 'easeOutQuart'
-                    }
-                }
-            });
+    <script>
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            }).format(amount);
         }
 
-        // Live update
-        Object.values(el).forEach(input => {
-            if (input && input.tagName === 'INPUT') input.addEventListener('input', update);
+        function calculateROI() {
+            const dailyCalls = parseFloat(document.getElementById('dailyCalls').value) || 0;
+            const missRate = (parseFloat(document.getElementById('missRate').value) || 0) / 100;
+            const convRate = (parseFloat(document.getElementById('convRate').value) || 0) / 100;
+            const avgSale = parseFloat(document.getElementById('avgSale').value) || 0;
+
+            const dailyMissed = Math.round(dailyCalls * missRate);
+            const dailyLost = dailyMissed * convRate * avgSale;
+            const monthlyLost = dailyLost * 30;
+            const annualLost = monthlyLost * 12;
+            const recoveredAnnual = annualLost;
+
+            document.getElementById('dailyMissed').textContent = dailyMissed.toLocaleString();
+            document.getElementById('dailyLost').textContent = formatCurrency(dailyLost);
+            document.getElementById('monthlyLost').textContent = formatCurrency(monthlyLost);
+            document.getElementById('annualLost').textContent = formatCurrency(annualLost);
+            document.getElementById('recoveredAnnual').textContent = formatCurrency(recoveredAnnual);
+
+            const results = document.getElementById('results');
+            if (!results.classList.contains('show')) {
+                results.classList.add('show');
+            }
+        }
+
+        // Real-time calculation on input
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculateROI);
         });
 
-        update();
+        // Initial load
+        calculateROI();
     </script>
 </body>
 </html>
+
 
